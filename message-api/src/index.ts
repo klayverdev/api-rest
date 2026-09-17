@@ -33,7 +33,6 @@ app.delete('/message/:id', (req: Request, res: Response) => {
   return res.status(204).send();
 });
 
-// Unknown routes.
 app.use((_req: Request, res: Response) => {
   res.status(404).json({ error: 'Route not found.' });
 });
