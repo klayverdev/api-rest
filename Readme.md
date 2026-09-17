@@ -34,7 +34,3 @@ Qualquer outra rota cai em 404.
 - `types.ts` — os tipos
 
 Separei validação e storage do Express pra poder trocar o Map por um banco depois sem mexer nas rotas, mas por enquanto tá simples assim mesmo.
-
-## Licença
-
-MIT
