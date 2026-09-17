@@ -1,11 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { CreateMessageInput, Message } from './types';
 
-/**
- * In-memory storage for messages. Data is lost on restart by design
- * (see README) — swap this class for a database-backed implementation
- * if persistence is ever needed, without touching the routes.
- */
+
 class MessageStore {
   private readonly messages = new Map<string, Message>();
 
@@ -30,5 +26,4 @@ class MessageStore {
   }
 }
 
-// Single shared instance used across the app.
 export const messageStore = new MessageStore();
