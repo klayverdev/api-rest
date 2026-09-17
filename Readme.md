@@ -1,92 +1,40 @@
-# Message API
+# api-rest
 
-A minimal REST API for creating, reading, and deleting messages.
+API bem simples pra criar, ler e deletar mensagens. Fiz pra treinar TypeScript com Express mesmo, nada de banco de dados — tudo fica na memória e some quando reinicia o servidor.
 
-Built with TypeScript, Node.js, and Express. Storage is in-memory, so data is cleared on every restart — this is intentional, not a limitation to work around.
+## Rodando
 
-## Requirements
-
-- Node.js 18+
-- npm
-
-## Getting started
-
-```bash
 npm install
 npm run dev
-```
 
-The server starts on `http://localhost:3000`. Change the port with `PORT`:
+Sobe em `http://localhost:3000`. Se quiser mudar a porta:
 
-```bash
 PORT=4000 npm run dev
-```
 
-For a production build:
+Pra build de produção:
 
-```bash
 npm run build
 npm start
-```
 
-## API
+## Rotas
 
-### `POST /message`
+`POST /message` — cria uma mensagem. Manda `content` (obrigatório, string não vazia) e `author` (opcional). Se `content` vier vazio ou faltando, ou `author` não for string, retorna 400.
 
-Creates a message.
+`GET /message/:id` — busca por id. 404 se não achar.
 
-```json
-{
-  "content": "Hello world",
-  "author": "gab"
-}
-```
+`DELETE /message/:id` — deleta. 204 se deu certo, 404 se não existir.
 
-| Field     | Type   | Required | Notes                          |
-| --------- | ------ | -------- | ------------------------------ |
-| `content` | string | yes      | Must be non-empty after trim.  |
-| `author`  | string | no       | Rejected with 400 if not a string. |
+Qualquer outra rota cai em 404.
 
-**Responses**
+## Estrutura
 
-| Status | When                                             |
-| ------ | ------------------------------------------------ |
-| `201`  | Message created. Returns the message.             |
-| `400`  | `content` missing/empty, `author` not a string, or malformed JSON. |
+- `index.ts` — as rotas e o app do Express
+- `store.ts` — onde ficam as mensagens (um Map, nada demais)
+- `validators.ts` — valida o corpo da requisição
+- `types.ts` — os tipos
 
-### `GET /message/:id`
+Separei validação e storage do Express pra poder trocar o Map por um banco depois sem mexer nas rotas, mas por enquanto tá simples assim mesmo.
 
-| Status | When                    |
-| ------ | ----------------------- |
-| `200`  | Message found. Returns it. |
-| `404`  | No message with that id. |
-
-### `DELETE /message/:id`
-
-| Status | When                    |
-| ------ | ----------------------- |
-| `204`  | Message deleted.         |
-| `404`  | No message with that id. |
-
-Any other route returns `404`.
-
-## Project structure
-
-```
-src/
-├── index.ts       # Express app, routes, error handling
-├── store.ts       # In-memory message storage
-├── validators.ts  # Request validation, decoupled from Express
-└── types.ts       # Shared TypeScript types
-```
-
-Routes stay thin — they delegate validation to `validators.ts` and persistence to `store.ts`, so either can be swapped or unit-tested independently.
-
-## Notes
-
-- Messages live in a `Map` and are lost on restart. Swap `MessageStore` for a database-backed implementation if persistence is needed; the route handlers won't change.
-- No external validation library — the ruleset is small enough that plain functions are clearer than a schema dependency.
-
-## License
+## Licença
 
 MIT
