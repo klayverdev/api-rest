@@ -4,11 +4,6 @@ export type ValidationResult<T> =
   | { valid: true; data: T }
   | { valid: false; error: string };
 
-/**
- * Validates and normalizes the body of a POST /message request.
- * Kept separate from the route handler so it can be unit-tested
- * and reused without spinning up Express.
- */
 export function validateCreateMessageInput(
   body: unknown
 ): ValidationResult<CreateMessageInput> {
