@@ -50,5 +50,5 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
 const PORT = Number(process.env.PORT) || 3000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(` Server running on http://localhost:${PORT}`);
 });
