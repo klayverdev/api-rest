@@ -1,9 +1,13 @@
+import 'dotenv/config';
 import express, { NextFunction, Request, Response } from 'express';
 import { messageStore } from './store';
 import { validateCreateMessageInput } from './validators';
+import { requireApiKey } from './auth';
 
 const app = express();
 app.use(express.json());
+
+app.use('/message', requireApiKey);
 
 app.post('/message', (req: Request, res: Response) => {
   const result = validateCreateMessageInput(req.body);
