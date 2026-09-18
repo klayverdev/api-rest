@@ -1,51 +1,59 @@
 # api-rest
 
-API bem simples pra criar, ler e deletar mensagens. Fiz pra treinar TypeScript com Express mesmo, nada de banco de dados — tudo fica na memória e some quando reinicia o servidor.
+A very simple API for creating, reading, and deleting messages. I built it to practice TypeScript with Express. There’s no database — everything is stored in memory and gets wiped when the server restarts.
 
-## Rodando
+## Running
 
-Copia o `.env.example` pra `.env` e coloca uma chave qualquer no `API_KEY` (pode ser qualquer string, só precisa bater com a que você manda nas requisições):
+Copy `.env.example` to `.env` and add any value to `API_KEY` (it can be any string, as long as it matches the key you send in your requests):
 
+```bash
 cp .env.example .env
 
 npm install
 npm run dev
+```
 
-Sobe em `http://localhost:3000`. Se quiser mudar a porta, muda o `PORT` no `.env` mesmo.
+The API runs at `http://localhost:3000`. If you want to change the port, just update `PORT` in `.env`.
 
-Pra build de produção:
+For a production build:
 
+```bash
 npm run build
 npm start
+```
 
-Se esquecer de configurar o `API_KEY`, a API sobe normal mas fica rejeitando tudo (e avisa no console).
+If you forget to configure `API_KEY`, the API will still start normally, but it will reject every request and show a warning in the console.
 
-## Autenticação
+## Authentication
 
-Toda rota de `/message` pede a chave no header `x-api-key`:
+Every `/message` route requires the API key in the `x-api-key` header:
 
-curl -H "x-api-key: sua-chave-aqui" http://localhost:3000/message/algum-id
+```bash
+curl -H "x-api-key: your-api-key-here" http://localhost:3000/message/some-id
+```
 
-Sem o header, ou com a chave errada, volta 401. A chave nunca fica no código, só no `.env` (que não vai pro git).
+Without the header, or with an incorrect key, the API returns `401`.
 
-## Rotas
+The key is never stored in the code, only in `.env` (which is not committed to Git).
 
-`POST /message` — cria uma mensagem. Manda `content` (obrigatório, string não vazia) e `author` (opcional). Se `content` vier vazio ou faltando, ou `author` não for string, retorna 400.
+## Routes
 
-`GET /message/:id` — busca por id. 404 se não achar.
+`POST /message` — creates a message. Send `content` (required, non-empty string) and `author` (optional). If `content` is empty or missing, or if `author` is not a string, the API returns `400`.
 
-`DELETE /message/:id` — deleta. 204 se deu certo, 404 se não existir.
+`GET /message/:id` — gets a message by ID. Returns `404` if the message is not found.
 
-Essas três pedem `x-api-key`, como falei acima.
+`DELETE /message/:id` — deletes a message. Returns `204` if successful, or `404` if the message does not exist.
 
-Qualquer outra rota cai em 404 (essa aqui não pede chave, nem faz sentido).
+All three routes require the `x-api-key` header, as mentioned above.
 
-## Estrutura
+Any other route returns `404` (this one does not require an API key, since there is no reason for it to).
 
-- `index.ts` — as rotas e o app do Express
-- `auth.ts` — middleware que confere o `x-api-key`
-- `store.ts` — onde ficam as mensagens (um Map, nada demais)
-- `validators.ts` — valida o corpo da requisição
-- `types.ts` — os tipos
+## Structure
 
-Separei validação e storage do Express pra poder trocar o Map por um banco depois sem mexer nas rotas, mas por enquanto tá simples assim mesmo.
+* `index.ts` — Express app and routes
+* `auth.ts` — middleware that validates the `x-api-key`
+* `store.ts` — stores the messages (a `Map`, nothing fancy)
+* `validators.ts` — validates the request body
+* `types.ts` — TypeScript types
+
+I separated validation and storage from Express so I can replace the `Map` with a database later without having to change the routes. For now, I’m keeping it simple.
