@@ -4,17 +4,29 @@ API bem simples pra criar, ler e deletar mensagens. Fiz pra treinar TypeScript c
 
 ## Rodando
 
+Copia o `.env.example` pra `.env` e coloca uma chave qualquer no `API_KEY` (pode ser qualquer string, só precisa bater com a que você manda nas requisições):
+
+cp .env.example .env
+
 npm install
 npm run dev
 
-Sobe em `http://localhost:3000`. Se quiser mudar a porta:
-
-PORT=4000 npm run dev
+Sobe em `http://localhost:3000`. Se quiser mudar a porta, muda o `PORT` no `.env` mesmo.
 
 Pra build de produção:
 
 npm run build
 npm start
+
+Se esquecer de configurar o `API_KEY`, a API sobe normal mas fica rejeitando tudo (e avisa no console).
+
+## Autenticação
+
+Toda rota de `/message` pede a chave no header `x-api-key`:
+
+curl -H "x-api-key: sua-chave-aqui" http://localhost:3000/message/algum-id
+
+Sem o header, ou com a chave errada, volta 401. A chave nunca fica no código, só no `.env` (que não vai pro git).
 
 ## Rotas
 
@@ -24,11 +36,14 @@ npm start
 
 `DELETE /message/:id` — deleta. 204 se deu certo, 404 se não existir.
 
-Qualquer outra rota cai em 404.
+Essas três pedem `x-api-key`, como falei acima.
+
+Qualquer outra rota cai em 404 (essa aqui não pede chave, nem faz sentido).
 
 ## Estrutura
 
 - `index.ts` — as rotas e o app do Express
+- `auth.ts` — middleware que confere o `x-api-key`
 - `store.ts` — onde ficam as mensagens (um Map, nada demais)
 - `validators.ts` — valida o corpo da requisição
 - `types.ts` — os tipos
